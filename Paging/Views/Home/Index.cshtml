@@ -1,0 +1,56 @@
+﻿@model PagedList.IPagedList<Paging.Models.Book>
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Books</h2>
+<div class="row">
+    @Html.ActionLink("Create New", "Create")
+    @using (Html.BeginForm("Index", "Home", FormMethod.Get))
+    {
+            <p>
+                Find @Html.TextBox("SearchString", ViewBag.CurrentFilter as string)
+                <input type="submit" class="btn btn-primary" value="Search" />
+            </p>
+    }
+   
+    <div class="table table-responsive">
+        <table class="table table-condensed">
+            <tr>
+                <th>
+                    @Html.ActionLink("Title", "Index", new { sortOrder = ViewBag.TitleSortParam, currentFilter = ViewBag.CurrentFilter })
+                </th>
+                <th>
+                    @Html.ActionLink("Author", "Index", new { sortOrder = ViewBag.AuthorSortParam, currentFilter = ViewBag.CurrentFilter })
+                </th>
+                <th></th>
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Author)
+                    </td>
+                    <td>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    </td>
+                </tr>
+            }
+
+        </table>
+
+    </div>
+</div>
+
+Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+
+@Html.PagedListPager(Model, page => Url.Action("Index", "Home",
+   new { sortOrder = ViewBag.CurrentSort, page, currentFilter = ViewBag.CurrentFilter }))
